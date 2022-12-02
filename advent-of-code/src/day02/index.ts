@@ -46,9 +46,9 @@ const part1 = (rawInput: string) => {
 
 /*
  * First Column:    Second Column Self
- * A - Rock         X - Need to end in Win
+ * A - Rock         X - Need to end in Loss
  * B - Paper        Y - Need to end in Draw
- * C - Scissors     Z - Need to end in Loss
+ * C - Scissors     Z - Need to end in Win
  * */
 const part2 = (rawInput: string) => {
   const listOfGames: string[] = parseInput(rawInput).split("\n");
