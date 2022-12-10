@@ -29,3 +29,28 @@
  *     import { myUtil } from '../utils'
  *
  */
+export const chunkArray = (arr: string[], n: number) => {
+  const chunkLength: number = Math.max(arr.length / n, 1);
+  let chunks: string[] = [];
+  for (let i = 0; i < n; i++) {
+    if (chunkLength * (i + 1) <= arr.length)
+      chunks.push(arr.slice(chunkLength * i, chunkLength * (i + 1)));
+  }
+  return chunks;
+};
+
+type _Chunk_ = <T>(chunkSize: number, arr: T[]) => T[][]
+
+export const _chunk_: _Chunk_ = (chunkSize, arr) => {
+  if (chunkSize <= 0) {
+    throw new Error("Chunk size has to be greater than 0.");
+  }
+
+  const chunks = new Array(Math.ceil(arr.length / chunkSize));
+
+  for (let i = 0, j = 0; i < arr.length; i = i + chunkSize, j++) {
+    chunks[j] = arr.slice(i, i + chunkSize);
+  }
+
+  return chunks;
+};
