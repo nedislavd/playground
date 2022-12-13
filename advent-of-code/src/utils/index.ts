@@ -39,7 +39,7 @@ export const chunkArray = (arr: string[], n: number) => {
   return chunks;
 };
 
-type _Chunk_ = <T>(chunkSize: number, arr: T[]) => T[][]
+type _Chunk_ = <T>(chunkSize: number, arr: T[]) => T[][];
 
 export const _chunk_: _Chunk_ = (chunkSize, arr) => {
   if (chunkSize <= 0) {
@@ -54,3 +54,10 @@ export const _chunk_: _Chunk_ = (chunkSize, arr) => {
 
   return chunks;
 };
+
+export const padArrToLength = (arr: any[], len: number): any[] => [
+  ...arr,
+  ...Array(Math.max(len, arr.length) - arr.length).fill(-1),
+];
+
+export const sum = (a: number, b: number): number => a + b;
