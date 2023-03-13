@@ -11,3 +11,9 @@ system.
  1: 57 times \
  2: 20 times \
  3: 0 times 
+
+### Prerequisites `Node.js` and `yarn` installed
+
+### To run the console dev project first install the dependencies using `yarn install`
+### Then run `yarn dev` to start the console project
+### To run the tests use `yarn test`
