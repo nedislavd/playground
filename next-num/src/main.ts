@@ -11,3 +11,5 @@ for (let i = 0; i < 100; i++) {
 }
 
 console.log([...result.entries()]);
+
+const notNumbers = [...nums];
