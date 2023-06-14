@@ -1,32 +1,37 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-interface Album {
-  albumId: number;
+interface AlbumDetails {
+  userId: number;
   id: number;
   title: string;
-  url: string;
-  thumbnailUrl: string;
+  photos: Array<{ id: number; title: string; url: string; thumbnailUrl: string }>;
 }
 
 interface AlbumsState {
-  albums: Album[];
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  error: string | null;
+  albums: { [key: string]: AlbumDetails };
+  albumDetails: { [key: string]: AlbumDetails };
+  status: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: AlbumsState = {
-  albums: [],
+  albums: {},
+  albumDetails: {},
   status: 'idle',
-  error: null
 };
 
 export const fetchAlbums = createAsyncThunk('albums/fetchAlbums', async () => {
-  const response = await axios.get<Album[]>('https://jsonplaceholder.typicode.com/photos');
+  const response = await axios.get('https://jsonplaceholder.typicode.com/albums');
   return response.data;
 });
 
-const albumsSlice = createSlice({
+export const fetchAlbumDetails = createAsyncThunk('albums/fetchAlbumDetails', async (albumId: string) => {
+  const response = await axios.get(`https://jsonplaceholder.typicode.com/albums/${albumId}/photos`);
+  return { id: albumId, photos: response.data };
+});
+
+/*TODO: move this to a "slices" directory */
+export const albumsSlice = createSlice({
   name: 'albums',
   initialState,
   reducers: {},
@@ -36,12 +41,17 @@ const albumsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchAlbums.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.albums = action.payload;
+        state.status = 'idle';
+        action.payload.forEach((album) => {
+          state.albums[album.id] = album;
+        });
       })
-      .addCase(fetchAlbums.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+      .addCase(fetchAlbumDetails.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchAlbumDetails.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.albumDetails[action.payload.id] = action.payload;
       });
   },
 });

@@ -34,12 +34,12 @@ const SideNav: React.FC = () => {
   const Row = ({ index, style }) => (
     <Box
       component={RouterLink}
-      to={`/album/${filteredAlbums[index]}`}
-      key={filteredAlbums[index]}
+      to={`/album/${filteredAlbums[index+1]}`}
+      key={filteredAlbums[index+1]}
       sx={{ textDecoration: 'none', color: 'inherit' }}
     >
       <ListItem button style={style}>
-        <ListItemText primary={`Album ${filteredAlbums[index]}`} />
+        <ListItemText primary={`Album ${filteredAlbums[index+1]}`} />
       </ListItem>
     </Box>
   );

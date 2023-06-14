@@ -4,7 +4,7 @@ import storage from 'redux-persist/lib/storage' // defaults to localStorage for 
 import { combineReducers } from '@reduxjs/toolkit';
 import albumsReducer from './albumsSlice';
 
-
+/*TODO: move this to a "stores" directory*/
 const persistConfig = {
   key: 'root',
   storage,

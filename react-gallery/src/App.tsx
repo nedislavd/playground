@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './views/HomePage'
+import Album from './components/Album'
 import './App.css'
 
 function App() {
@@ -8,7 +9,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        {/* other routes go here */}
+        <Route path="/album/:albumId" element={<Album />} />
       </Routes>
     </Router>
   )
