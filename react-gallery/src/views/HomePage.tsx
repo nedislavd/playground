@@ -32,6 +32,7 @@ const HomePage: React.FC = () => {
 
   return (<div>
     <SideNav />
+    <h1>Welcome to the React Gallery</h1>
     {/*{content}*/}
   </div>);
 };

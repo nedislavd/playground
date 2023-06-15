@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo  } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 import { fetchAlbums } from '../redux/albumsSlice';
@@ -34,12 +34,12 @@ const SideNav: React.FC = () => {
   const Row = ({ index, style }) => (
     <Box
       component={RouterLink}
-      to={`/album/${filteredAlbums[index+1]}`}
-      key={filteredAlbums[index+1]}
+      to={`/album/${filteredAlbums[index]}`}
+      key={filteredAlbums[index]}
       sx={{ textDecoration: 'none', color: 'inherit' }}
     >
       <ListItem button style={style}>
-        <ListItemText primary={`Album ${filteredAlbums[index+1]}`} />
+        <ListItemText primary={`Album ${filteredAlbums[index]}`} />
       </ListItem>
     </Box>
   );
@@ -80,4 +80,4 @@ const SideNav: React.FC = () => {
   );
 };
 
-export default SideNav;
+export default memo(SideNav);
