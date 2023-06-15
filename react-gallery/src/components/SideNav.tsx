@@ -76,7 +76,7 @@ const SideNav: React.FC = () => {
                     </ListItemIcon>
                 </ListItem>
                 <List
-                    height={window.innerHeight - 100} // Adjust this to the remaining height of your drawer
+                    height={window.innerHeight - 150} // Adjust this to the remaining height of your drawer
                     itemCount={filteredAlbums.length}
                     itemSize={ITEM_SIZE}
                 >

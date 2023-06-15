@@ -1,8 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
-import {Card, CardContent, CardMedia, Grid, Typography} from '@mui/material';
-import {RootState} from '../redux/store';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Grid } from '@mui/material';
+import { RootState } from '../redux/store';
 import SideNav from '../components/SideNav';
+import { removeFavorite } from "../redux/favoritesSlice";
+import PhotoCard from '../components/PhotoCard';
 
 type Photo = {
     albumId: number,
@@ -13,7 +15,9 @@ type Photo = {
 }
 
 const Favorites: React.FC = () => {
+    const dispatch = useDispatch();
     const [favoritePhotos, setFavoritePhotos] = useState<Photo[]>([]);
+    const [loadedImages, setLoadedImages] = useState<number[]>([]);
     const favoritesIds = useSelector((state: RootState) => state.favorites.favorites);
 
     useEffect(() => {
@@ -22,49 +26,46 @@ const Favorites: React.FC = () => {
                 fetch(`https://jsonplaceholder.typicode.com/photos/${id}`)
             ));
             const photos = await Promise.all(responses.map(res => res.json()));
+
+            photos.forEach((photo: Photo) => {
+                const img = new Image();
+                img.src = photo.url;
+                img.onload = () => {
+                    setLoadedImages((prev) => [...prev, photo.id]);
+                };
+            });
+
             setFavoritePhotos(photos);
         };
 
         fetchFavoritePhotos();
     }, [favoritesIds]);
 
+    const handleFavoritesClick = (id: number, isFavorite: boolean) => {
+        if (isFavorite) {
+            dispatch(removeFavorite(id));
+        }
+    };
+
     return (
-        /*<Grid container spacing={3}>
-            {favoritePhotos.map((photo) => (
-                <Grid item xs={12} sm={6} md={4} key={photo.id}>
-                    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                        <CardMedia
-                            component="img"
-                            image={photo.url}
-                            alt={photo.title}
-                        />
-                        <CardContent sx={{ flexGrow: 1 }}>
-                            <Typography variant="body1">{photo.title}</Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            ))}
-        </Grid>*/
-
-
         <Grid container spacing={2}>
             <Grid item xs={2} sm={8} md={10}>
                 <SideNav/>
             </Grid>
-            {favoritePhotos.map((photo) => (
-                <Grid item xs={12} sm={6} md={4} key={photo.id}>
-                    <Card sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                        <CardMedia
-                            component="img"
-                            image={photo.url}
-                            alt={photo.title}
+            {favoritePhotos.map((photo) => {
+                const isFavorite = favoritesIds.includes(photo.id);
+                const isLoaded = loadedImages.includes(photo.id);
+                return (
+                    <Grid item xs={12} sm={6} md={3} key={photo.id}>
+                        <PhotoCard
+                            photo={photo}
+                            isFavorite={isFavorite}
+                            isLoaded={isLoaded}
+                            onFavoritesClick={handleFavoritesClick}
                         />
-                        <CardContent sx={{flexGrow: 1}}>
-                            <Typography variant="body1">{photo.title}</Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            ))}
+                    </Grid>
+                );
+            })}
         </Grid>
     );
 };

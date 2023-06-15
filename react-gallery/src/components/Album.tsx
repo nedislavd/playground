@@ -1,13 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {useParams} from 'react-router-dom';
-import {fetchAlbumDetails} from '../redux/albumsSlice';
-import {addFavorite, removeFavorite} from '../redux/favoritesSlice';
-import {Card, CardContent, CardMedia, Grid, IconButton, Typography, Box, CardActions } from '@mui/material';
-import {Skeleton} from '@mui/lab';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import StarIcon from '@mui/icons-material/Star';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { fetchAlbumDetails } from '../redux/albumsSlice';
+import { addFavorite, removeFavorite } from '../redux/favoritesSlice';
+import { Grid } from '@mui/material';
 import SideNav from '../components/SideNav';
+import PhotoCard from '../components/PhotoCard';
 
 interface RootState {
     albums: any;
@@ -15,7 +13,7 @@ interface RootState {
 
 const Album: React.FC = () => {
     const dispatch = useDispatch();
-    const {albumId} = useParams<{ albumId: string }>();
+    const { albumId } = useParams<{ albumId: string }>();
     const album = useSelector((state: RootState) => state.albums.albumDetails[albumId]);
     const [loadedImages, setLoadedImages] = useState<number[]>([]);
     const favoriteIds = useSelector((state: RootState) => state.favorites.favorites);
@@ -53,37 +51,20 @@ const Album: React.FC = () => {
             </Grid>
             {album.photos.map((photo) => {
                 const isFavorite = favoriteIds.includes(photo.id);
+                const isLoaded = loadedImages.includes(photo.id);
 
                 return (
-                    <Grid item xs={10} sm={5} md={3} key={photo.id}>
-                        <Card sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                            <Box position="relative">
-                                {!loadedImages.includes(photo.id) ? (
-                                    <Skeleton variant="rectangular" width="100%" height={308}/>
-                                ) : (
-                                    <CardMedia
-                                        component="img"
-                                        image={photo.url}
-                                        alt={photo.title}
-                                    />
-                                )}
-                                <CardActions sx={{position: 'absolute', top: 0, right: 0}}>
-                                    <IconButton
-                                        aria-label="add to favorites"
-                                        onClick={() => handleFavoritesClick(photo.id, isFavorite)}
-                                    >
-                                        {isFavorite ? <StarIcon/> : <StarBorderIcon/>}
-                                    </IconButton>
-                                </CardActions>
-                            </Box>
-                            <CardContent sx={{flexGrow: 1}}>
-                                <Typography variant="body1">{photo.title}</Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>)
+                    <Grid item xs={12} sm={6} md={3} key={photo.id}>
+                        <PhotoCard
+                            photo={photo}
+                            isFavorite={isFavorite}
+                            isLoaded={isLoaded}
+                            onFavoritesClick={handleFavoritesClick}
+                        />
+                    </Grid>
+                );
             })}
         </Grid>
-
     );
 };
 
