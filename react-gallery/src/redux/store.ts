@@ -1,23 +1,30 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist'
+import {combineReducers, configureStore, getDefaultMiddleware} from '@reduxjs/toolkit';
+import {FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE,} from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
-import { combineReducers } from '@reduxjs/toolkit';
 import albumsReducer from './albumsSlice';
+import favoritesReducer from './favoritesSlice';
 
 /*TODO: move this to a "stores" directory*/
 const persistConfig = {
-  key: 'root',
-  storage,
+    key: 'root',
+    storage,
 }
 
-export const rootReducer = combineReducers({
-  albums: albumsReducer,
-})
-
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+const persistedReducer = persistReducer(
+    persistConfig,
+    combineReducers({
+        albums: albumsReducer,
+        favorites: favoritesReducer,
+    })
+);
 
 export const store = configureStore({
-  reducer: persistedReducer,
+    reducer: persistedReducer,
+    middleware: getDefaultMiddleware({
+        serializableCheck: {
+            ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        },
+    }),
 })
 
 export const persistor = persistStore(store)

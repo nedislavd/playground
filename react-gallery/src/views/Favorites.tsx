@@ -1,46 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { fetchAlbumDetails } from '../redux/albumsSlice';
-import { addFavorite, removeFavorite } from '../redux/favoritesSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { Grid } from '@mui/material';
+import { RootState } from '../redux/store';
 import SideNav from '../components/SideNav';
+import { removeFavorite } from "../redux/favoritesSlice";
 import PhotoCard from '../components/PhotoCard';
 
-interface RootState {
-    albums: any;
+type Photo = {
+    albumId: number,
+    id: number,
+    title: string,
+    url: string,
+    thumbnailUrl: string,
 }
 
-const Album: React.FC = () => {
+const Favorites: React.FC = () => {
     const dispatch = useDispatch();
-    const { albumId } = useParams<{ albumId: string }>();
-    const album = useSelector((state: RootState) => state.albums.albumDetails[albumId]);
+    const [favoritePhotos, setFavoritePhotos] = useState<Photo[]>([]);
     const [loadedImages, setLoadedImages] = useState<number[]>([]);
-    const favoriteIds = useSelector((state: RootState) => state.favorites.favorites);
+    const favoritesIds = useSelector((state: RootState) => state.favorites.favorites);
 
     useEffect(() => {
-        if (!album) {
-            dispatch(fetchAlbumDetails(albumId));
-        } else {
-            album.photos.forEach((photo: any) => {
+        const fetchFavoritePhotos = async () => {
+            const responses = await Promise.all(favoritesIds.map(id =>
+                fetch(`https://jsonplaceholder.typicode.com/photos/${id}`)
+            ));
+            const photos = await Promise.all(responses.map(res => res.json()));
+
+            photos.forEach((photo: Photo) => {
                 const img = new Image();
                 img.src = photo.url;
                 img.onload = () => {
                     setLoadedImages((prev) => [...prev, photo.id]);
                 };
             });
-        }
-    }, [album, albumId, dispatch]);
 
-    if (!album) {
-        return null;
-    }
+            setFavoritePhotos(photos);
+        };
+
+        fetchFavoritePhotos();
+    }, [favoritesIds]);
 
     const handleFavoritesClick = (id: number, isFavorite: boolean) => {
         if (isFavorite) {
             dispatch(removeFavorite(id));
-        } else {
-            dispatch(addFavorite(id));
         }
     };
 
@@ -49,10 +52,9 @@ const Album: React.FC = () => {
             <Grid item xs={2} sm={8} md={10}>
                 <SideNav/>
             </Grid>
-            {album.photos.map((photo) => {
-                const isFavorite = favoriteIds.includes(photo.id);
+            {favoritePhotos.map((photo) => {
+                const isFavorite = favoritesIds.includes(photo.id);
                 const isLoaded = loadedImages.includes(photo.id);
-
                 return (
                     <Grid item xs={12} sm={6} md={3} key={photo.id}>
                         <PhotoCard
@@ -68,4 +70,4 @@ const Album: React.FC = () => {
     );
 };
 
-export default Album;
+export default Favorites;
