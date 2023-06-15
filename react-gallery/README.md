@@ -37,6 +37,6 @@
 
 ## How to run
 1. Clone the repo
-2. Run `yarn` to install dependencies
+2. Run `yarn` to install dependencies (version 3.4.* and above)
 3. Run `yarn dev` to start the dev server
 4. Open `http://127.0.0.1:5173/` in your browser
