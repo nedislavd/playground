@@ -46,19 +46,19 @@ _Click a badge to go to the specific day._
 ## Installation
 
 ```
-yarn
+npm i
 ```
 
 ## Running in dev mode
 
 ```
-yarn start <day>
+npm start <day>
 ```
 
 Example:
 
 ```
-yarn start 1
+npm start 1
 ```
 
 ---
